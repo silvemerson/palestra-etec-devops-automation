@@ -1,0 +1,63 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Instala depedências
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+        - apt-transport-https
+        - ca-certificates
+        - gnupg
+        - python3-pip
+        - git
+
+    - name: Install Docker Key
+      apt_key:
+        url: 'https://download.docker.com/linux/ubuntu/gpg'
+
+    - name: Install Docker Repository
+      apt_repository:
+        repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
+        state: present
+        filename: docker-ce
+  
+    - name: Install Docker
+      apt:
+        name: docker-ce
+    - name: Adding existing user to group Docker
+      become: yes
+      user: 
+        name: '{{ ansible_user_id }}'
+        groups: docker 
+        append: yes
+    - name: Install Docker-Compose
+      get_url:
+        url: 'https://github.com/docker/compose/releases/download/1.26.2/docker-compose-Linux-x86_64'
+        dest: '/usr/local/bin/docker-compose'
+        mode: 755
+    
+    - name: Add Vagrant permissão para executar o docker
+      command: usermod -aG docker vagrant
+
+    - name: clone supermario
+      ansible.builtin.git:
+        repo: https://github.com/silvemerson/mariohtml5.git
+        dest: /home/vagrant
+        owner: vagrant
+        group: vagrant
+        single_branch: yes
+        version: master
+
+    - name: Supermario Start
+      command: docker run -d -p 8600:8081 pengbai/docker-supermario
+
+    - name: SonarQube Start
+      command: docker run -dti --name sonarqube --restart always -p 9000:9000 sonarqube:lts
+
+    
