@@ -46,16 +46,14 @@
       command: usermod -aG docker vagrant
 
     - name: clone supermario
-      ansible.builtin.git:
+      git:
         repo: https://github.com/silvemerson/mariohtml5.git
-        dest: /home/vagrant
-        owner: vagrant
-        group: vagrant
-        single_branch: yes
+        dest: /home/vagrant/mariohtml5
+        clone: yes
         version: master
 
     - name: Supermario Start
-      command: docker run -d -p 8600:8081 pengbai/docker-supermario
+      command: docker run -d -p 8600:8080 pengbai/docker-supermario
 
     - name: SonarQube Start
       command: docker run -dti --name sonarqube --restart always -p 9000:9000 sonarqube:lts

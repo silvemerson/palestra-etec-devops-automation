@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 vms = {
-  "tools-etec" => {"memory"=>"6144" , "cpus"=>"2", "ip" => "20" , 'box' => 'silvemerson/ubuntu-20-04-ansible', 'provision' => 'provision/ansible/tools.yaml' }
+  "tools-etec" => {"memory"=>"6144" , "cpus"=>"2", "ip" => "20" , 'box' => 'silvemerson/ubuntu-20-04-ansible', 'provision' => 'provision/ansible/tools.yml' }
 }
 
 Vagrant.configure("2") do |config|
